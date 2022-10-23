@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:torch_controller/torch_controller.dart';
 import 'package:alan_voice/alan_voice.dart';
 
+//db: failed to install E:\Freelancing\flashlight\build\app\outputs\flutter-apk\app.apk: Failure [INSTALL_FAILED_USER_RESTRICTED: Install canceled by user]
+//Error launching application on Redmi 8.
 class FlashLightApp extends StatefulWidget {
   const FlashLightApp({Key? key}) : super(key: key);
 
@@ -12,6 +14,8 @@ class FlashLightApp extends StatefulWidget {
 
 class _FlashLightAppState extends State<FlashLightApp>
     with TickerProviderStateMixin {
+  //background service
+
   //alan voice assistance
   _FlashLightAppState() {
     /// Init Alan Button with project key from Alan Studio
@@ -26,10 +30,21 @@ class _FlashLightAppState extends State<FlashLightApp>
   _handleCommand(Map<String, dynamic> command) {
     switch (command['command']) {
       case "TurnOn":
-        controller.toggle();
+        setState(() {
+          if (!isClicked) {
+            isClicked = true;
+            controller.toggle();
+          }
+        });
+
         break;
       case "TurnOff":
-        controller.toggle();
+        setState(() {
+          if (isClicked) {
+            isClicked = false;
+            controller.toggle();
+          }
+        });
         break;
       default:
         print("Unknown command");
@@ -40,39 +55,46 @@ class _FlashLightAppState extends State<FlashLightApp>
   late AnimationController _animatedcontroller;
   Color color = Colors.white;
   double fontSize = 20;
-  bool isClicked = true;
+  bool isClicked = false;
   final controller = TorchController();
 
   final DecorationTween decorationTween = DecorationTween(
-      begin: BoxDecoration(
+    begin: BoxDecoration(
+      color: Colors.white,
+      shape: BoxShape.circle,
+      boxShadow: const [
+        BoxShadow(
           color: Colors.white,
-          shape: BoxShape.circle,
-          boxShadow: const [
-            BoxShadow(
-                color: Colors.white,
-                spreadRadius: 5,
-                blurRadius: 20,
-                offset: Offset(0, 0))
-          ],
-          border: Border.all(color: Colors.black)),
-      end: BoxDecoration(
-          color: Colors.white,
-          shape: BoxShape.circle,
-          border: Border.all(color: Colors.black),
-          boxShadow: const [
-            BoxShadow(
-                color: Colors.red,
-                spreadRadius: 30,
-                blurRadius: 15,
-                offset: Offset(0, 0))
-          ]));
+          spreadRadius: 5,
+          blurRadius: 20,
+          offset: Offset(0, 0),
+        )
+      ],
+      border: Border.all(color: Colors.black),
+    ),
+    end: BoxDecoration(
+      color: Colors.white,
+      shape: BoxShape.circle,
+      border: Border.all(color: Colors.black),
+      boxShadow: const [
+        BoxShadow(
+          color: Colors.red,
+          spreadRadius: 30,
+          blurRadius: 15,
+          offset: Offset(0, 0),
+        )
+      ],
+    ),
+  );
 
   @override
   void initState() {
     super.initState();
 
     _animatedcontroller = AnimationController(
-        vsync: this, duration: const Duration(milliseconds: 200));
+      vsync: this,
+      duration: const Duration(milliseconds: 200),
+    );
   }
 
   @override
@@ -103,29 +125,19 @@ class _FlashLightAppState extends State<FlashLightApp>
                 position: DecorationPosition.background,
                 decoration: decorationTween.animate(_animatedcontroller),
                 child: SizedBox(
-                    width: 120,
-                    height: 120,
-                    child: Center(
-                        child: Icon(
+                  width: 120,
+                  height: 120,
+                  child: Center(
+                    child: Icon(
                       Icons.power_settings_new,
                       color: isClicked ? Colors.black : Colors.red,
                       size: 60,
-                    ))),
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
-          Container(
-              height: MediaQuery.of(context).size.height / 1.4,
-              alignment: Alignment.bottomCenter,
-              child: AnimatedDefaultTextStyle(
-                  curve: Curves.ease,
-                  child: Text(!isClicked ? 'Flashlight ON' : 'Flashlight OFF'),
-                  style: TextStyle(
-                      color: color,
-                      fontSize: fontSize,
-                      letterSpacing: 0.5,
-                      fontWeight: FontWeight.bold),
-                  duration: const Duration(milliseconds: 200)))
         ],
       ),
     );
