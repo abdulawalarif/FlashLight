@@ -125,19 +125,52 @@ class _FlashLightAppState extends State<FlashLightApp>
                 position: DecorationPosition.background,
                 decoration: decorationTween.animate(_animatedcontroller),
                 child: SizedBox(
-                  width: 120,
-                  height: 120,
+                  width: 90,
+                  height: 90,
                   child: Center(
                     child: Icon(
                       Icons.power_settings_new,
                       color: isClicked ? Colors.black : Colors.red,
-                      size: 60,
+                      size: 40,
                     ),
                   ),
                 ),
               ),
             ),
           ),
+          //This is instruction text for this application
+          // Padding(
+          //   padding: const EdgeInsets.fromLTRB(30, 190, 30, 100),
+          //   child: const SizedBox(
+          //     height: 50,
+          //     width: 320,
+          //     child: Center(
+          //       child: Text(
+          //         "For voice command you can press the button on the bottom left, or say, Hey Alan For activating. Commands: On and Off",
+          //         style: TextStyle(color: Colors.white, fontSize: 15),
+          //       ),
+          //     ),
+          //   ),
+          // )
+
+          Padding(
+              padding: EdgeInsets.fromLTRB(30, 190, 30, 100),
+              child: SizedBox(
+                height: 80,
+                width: 320,
+                child: RichText(
+                  text: const TextSpan(
+                      text:
+                          'For voice command you can press the button on the bottom, or say, Hey Alan For activating. Commands:',
+                      style: TextStyle(color: Colors.white, fontSize: 15),
+                      children: <TextSpan>[
+                        TextSpan(
+                          text: '  On and Off',
+                          style: TextStyle(color: Colors.red, fontSize: 18),
+                        )
+                      ]),
+                ),
+              ))
         ],
       ),
     );
